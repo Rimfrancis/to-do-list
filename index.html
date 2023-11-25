@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List App</title>
+    <style>
+        
+        body {
+        font-family: serif;
+        background-color: #1B262C;
+        text-align: center;
+        margin: 50px;
+    }
+
+    .contain {
+        max-width: 600px;
+        margin: 0 auto;
+        background-image: url(ZQH8UV.jpg);
+        background-size: cover;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+    }
+
+    h1 {
+        color: white;
+        font-size: 300%;
+    }
+
+    .input_contain {
+        margin-bottom: 20px;
+    }
+
+    #taskInput {
+        padding: 15px;
+        margin: 10px;
+        width: 70%;
+        font-size: 16px;
+        border: 2px solid black;
+        border-radius: 8px;
+        outline: none;
+        
+    }
+
+    button {
+        padding: 15px;
+        font-size: 16px;
+        margin-left: 10px;
+        background-color: #BBE1FA;
+        color: black ;
+        border: 2px solid black;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.5s ease;
+    }
+
+    button:hover {
+        background-color: #3282B8;
+    }
+
+    .button_contain {
+        margin-bottom: 20px;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 20px 0;
+    }
+
+    li {
+        background-color: #BBE1FA;
+        padding: 10px;
+        border-radius: 10px;
+        border: 2px solid black;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .edit_btn {
+        background-color: #2D9596;  
+        color: #fff;
+        border: 2px solid black;
+        padding: 12px;
+        border-radius: 8px;
+        margin-left: auto;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .edit_btn:hover {
+        background-color: #39A7FF; 
+    }   
+
+    .del_btn {
+        background-color: #2D9596;
+        color: #fff;
+        border: 2px solid black;
+        padding: 12px;
+        border-radius: 8px;
+        margin-right: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .del_btn:hover {
+        background-color: #39A7FF;
+    }
+
+
+    
+    </style>
+</head>
+<body>
+
+    <div class="contain">
+        <h1>𝓣𝓸-𝓭𝓸 𝓛𝓲𝓼𝓽 ✔</h1>
+
+        <div class="input_contain">
+            <input type="text" id="taskInput" placeholder="Add a new task">
+            <button onclick="add()">Add Task</button>
+        </div>
+
+
+        <ul id="t_List"></ul>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    load();
+});
+
+function save() {
+    var taskList = document.getElementById("t_List");
+    var tasks = [];
+
+    for (var i = 0; i < taskList.children.length; i++) {
+        var taskText = taskList.children[i].textContent.trim();
+        
+        taskText = taskText.replace("Delete", "").trim();
+        taskText = taskText.replace("Edit", "").trim();
+        
+        tasks.push(taskText);
+    }
+
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function load() {
+    var taskList = document.getElementById("t_List");
+    var tasks = localStorage.getItem("tasks");
+
+    if (tasks) {
+        tasks = JSON.parse(tasks);
+
+        taskList.innerHTML = "";
+
+        for (var i = 0; i < tasks.length; i++) {
+            var li = createTaskElement(tasks[i]);
+            taskList.appendChild(li);
+        }
+    }
+}
+function add() {
+    var taskInput = document.getElementById("taskInput");
+    var taskList = document.getElementById("t_List");
+
+    if (taskInput.value.trim() === "") {
+        alert("Please enter a task");
+        return;
+    }
+
+    var li = createTaskElement(taskInput.value);
+    taskList.appendChild(li);
+
+    save();
+    taskInput.value = "";
+}
+
+function deleteTaskItem(taskItem) {
+    var taskList = document.getElementById("t_List");
+    taskList.removeChild(taskItem);
+    save();
+}
+function deleteTasks() {
+}
+
+
+function edit(taskItem) {
+    var newTaskText = prompt("Edit the task:",);
+
+    if (newTaskText !== null) {
+        taskItem.textContent = newTaskText + ' ';
+        save();
+    }
+}
+
+function createTaskElement(taskText) {
+
+    var li = document.createElement("li");
+    li.style.fontSize = "20px";
+
+  
+    var taskSpan = document.createElement("span");
+    taskSpan.textContent = taskText;
+
+   
+    var editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.className = "edit_btn";
+
+ 
+    editBtn.onclick = function () {
+        edit(taskSpan);
+    };
+
+    li.appendChild(taskSpan);
+    li.appendChild(editBtn);
+
+ 
+    var deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    deleteBtn.className = "del_btn";
+
+   
+    deleteBtn.onclick = function () {
+        deleteTaskItem(li);
+    };
+
+    li.appendChild(deleteBtn);
+
+    return li;
+}
+
+function editTask(taskSpan) {
+    var newTaskText = prompt("Edit the task:");
+
+    if (newTaskText !== null) {
+        taskSpan.textContent = newTaskText;
+        save();
+    }
+}
+
+
+
+
+    </script>
+
+</body>
+</html>
